@@ -1,0 +1,23 @@
+{
+    "background": "#16181A",
+    "black": "#1E2124",
+    "blue": "#5EA1FF",
+    "brightBlack": "#7B8496",
+    "brightBlue": "#0095FF",
+    "brightCyan": "#00FFEA",
+    "brightGreen": "#15FF00",
+    "brightPurple": "#FF5EF1",
+    "brightRed": "#FF5EA0",
+    "brightWhite": "#FFFFFF",
+    "brightYellow": "#F1FF5E",
+    "cursorColor": "#F1FF5E",
+    "cyan": "#5EF1FF",
+    "foreground": "#EAEAEA",
+    "green": "#5EFF6C",
+    "name": "cyberterm",
+    "purple": "#BD5EFF",
+    "red": "#FF6E5E",
+    "selectionBackground": "#3C4048",
+    "white": "#ACACAC",
+    "yellow": "#FFBD5E"
+}
