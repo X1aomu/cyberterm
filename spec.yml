@@ -1,0 +1,102 @@
+upstream-cyberdream:
+  dark:
+    bg:            &upstream_dark_bg            '#16181a'
+    bg_alt:        &upstream_dark_bg_alt        '#1e2124'
+    bg_hightlight: &upstream_dark_bg_hightlight '#3c4048'
+    fg:            &upstream_dark_fg            '#ffffff'
+    grey:          &upstream_dark_grey          '#7b8496'
+    blue:          &upstream_dark_blue          '#5ea1ff'
+    green:         &upstream_dark_green         '#5eff6c'
+    cyan:          &upstream_dark_cyan          '#5ef1ff'
+    red:           &upstream_dark_red           '#ff6e5e'
+    yellow:        &upstream_dark_yellow        '#f1ff5e'
+    magenta:       &upstream_dark_magenta       '#ff5ef1'
+    pink:          &upstream_dark_pink          '#ff5ea0'
+    orange:        &upstream_dark_orange        '#ffbd5e'
+    purple:        &upstream_dark_purple        '#bd5eff'
+  light:
+    bg:            &upstream_light_bg            '#ffffff'
+    bg_alt:        &upstream_light_bg_alt        '#eaeaea'
+    bg_hightlight: &upstream_light_bg_hightlight '#acacac'
+    fg:            &upstream_light_fg            '#16181a'
+    grey:          &upstream_light_grey          '#7b8496'
+    blue:          &upstream_light_blue          '#0057d1'
+    green:         &upstream_light_green         '#008b0c'
+    cyan:          &upstream_light_cyan          '#008c99'
+    red:           &upstream_light_red           '#d11500'
+    yellow:        &upstream_light_yellow        '#997b00'
+    magenta:       &upstream_light_magenta       '#d100bf'
+    pink:          &upstream_light_pink          '#f40064'
+    orange:        &upstream_light_orange        '#d17c00'
+    purple:        &upstream_light_purple        '#a018ff'
+
+palette:
+  ansi:
+    black:
+      color: *upstream_dark_bg_alt
+    red:
+      color: *upstream_dark_red
+    green:
+      color: *upstream_dark_green
+    yellow:
+      color: *upstream_dark_orange
+    blue:
+      color: *upstream_dark_blue
+    magenta:
+      color: *upstream_dark_purple
+    cyan:
+      color: *upstream_dark_cyan
+    white:
+      color: *upstream_light_bg_hightlight
+    bright-black:
+      color: *upstream_dark_grey
+    bright-red:
+      color: *upstream_dark_pink
+    bright-green:
+      color:
+        transform:
+          input: *upstream_dark_green
+          steps:
+            - rgb-to-hsv
+            - hue-sub-10-degree
+            - sat-set-max
+            - hsv-to-rgb
+    bright-yellow:
+      color: *upstream_dark_yellow
+    bright-blue:
+      color:
+        transform:
+          input: *upstream_dark_blue
+          steps:
+            - rgb-to-hsv
+            - hue-sub-10-degree
+            - sat-set-max
+            - hsv-to-rgb
+    bright-magenta:
+      color: *upstream_dark_magenta
+    bright-cyan:
+      color:
+        transform:
+          input: *upstream_dark_cyan
+          steps:
+            - rgb-to-hsv
+            - hue-sub-10-degree
+            - sat-set-max
+            - hsv-to-rgb
+    bright-white:
+      color: *upstream_dark_fg
+  terminal:
+    background:
+      color: *upstream_dark_bg
+    foreground:
+      color: *upstream_light_bg_alt
+    bright-background:
+      color: *upstream_dark_bg_hightlight
+    bright-foreground:
+      color: *upstream_dark_fg
+    selection-background:
+      color: *upstream_dark_bg_hightlight
+    cursor-background:
+      color: *upstream_dark_yellow
+    cursor-text:
+      color: *upstream_dark_pink
