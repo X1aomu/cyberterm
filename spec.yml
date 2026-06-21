@@ -30,8 +30,8 @@ upstream-cyberdream:
     orange:        &upstream_light_orange        '#d17c00'
     purple:        &upstream_light_purple        '#a018ff'
 
-palette:
-  name: 'cyberterm'
+palette-dark:
+  name: 'cyberterm-dark'
   ansi:
     black:
       color: *upstream_dark_bg_alt
