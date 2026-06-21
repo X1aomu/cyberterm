@@ -129,11 +129,72 @@ def resolve(value) -> tuple[int, int, int]:
             h, s, v = rgb_to_hsv(r, g, b)
         elif step == "hue-sub-10-degree":
             h = (h - 10) % 360
+        elif step == "hue-add-10-degree":
+            h = (h + 10) % 360
         elif step == "sat-set-max":
             s = 1.0
         elif step == "hsv-to-rgb":
             r, g, b = hsv_to_rgb(h, s, v)
     return r, g, b
+
+# ---------- palette display ----------
+
+NORMAL_NAMES = ["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
+TERM_PAIRS = [
+    ("background", "foreground"),
+    ("bright-background", "bright-foreground"),
+    ("cursor-background", "cursor-text"),
+]
+
+def display_palette(palette_data: dict) -> None:
+    name = palette_data["name"]
+    ansi = palette_data["ansi"]
+    term = palette_data["terminal"]
+
+    section(f"palette: {name}")
+
+    # 16-color bar: 2 rows × 8 columns (normal / bright aligned)
+    print()
+    for label, prefix in [("normal", ""), ("bright", "bright-")]:
+        print(f"  {label + ':':<9}", end="")
+        for cn in NORMAL_NAMES:
+            rgb = resolve(ansi[f"{prefix}{cn}"]["color"])
+            print(f"{bg(*rgb)}  {RESET}", end="")
+        print()
+
+    # table with colored hex on terminal background
+    term_bg_rgb = resolve(term["background"]["color"])
+    print(f"  {'normal':<{NAME_W}} {'hex':<{HEX_W}} {'color':<{BLOCK_W}}"
+          f"{GAP}"
+          f"{'bright-*':<{NAME_W}} {'hex':<{HEX_W}} {'color':<{BLOCK_W}}")
+    print(f"  {'─' * NAME_W} {'─' * HEX_W} {'─' * BLOCK_W}"
+          f"{GAP}"
+          f"{'─' * NAME_W} {'─' * HEX_W} {'─' * BLOCK_W}")
+    for cn in NORMAL_NAMES:
+        bright_name = f"bright-{cn}"
+        nrgb = resolve(ansi[cn]["color"])
+        nhex = rgb_to_hex(*nrgb)
+        brgb = resolve(ansi[bright_name]["color"])
+        bhex = rgb_to_hex(*brgb)
+        ansi_pair(cn, nhex, nrgb, bright_name, bhex, brgb, term_bg_rgb)
+
+    # terminal pairs + singles
+    pair_labels = [f"{bg} + {fg}" for bg, fg in TERM_PAIRS]
+    label_w = max(len(l) for l in pair_labels)
+    paired_keys = {k for a, b in TERM_PAIRS for k in (a, b)}
+    for (bg_key, fg_key), label in zip(TERM_PAIRS, pair_labels):
+        bg_rgb = resolve(term[bg_key]["color"])
+        fg_rgb = resolve(term[fg_key]["color"])
+        bg_hex = rgb_to_hex(*bg_rgb)
+        fg_hex = rgb_to_hex(*fg_rgb)
+        term_pair(label, bg_rgb, fg_rgb, bg_hex, fg_hex, label_w)
+    term_fg_rgb = resolve(term["foreground"]["color"])
+    for key in term:
+        if key not in paired_keys:
+            trgb = resolve(term[key]["color"])
+            thex = rgb_to_hex(*trgb)
+            demo = text_on_bg("Sample", term_fg_rgb, trgb, BLOCK_W + 6)
+            print(f"  {key:<{label_w}} {demo}  {thex}")
 
 # ---------- main ----------
 
@@ -143,9 +204,6 @@ def main() -> None:
     upstream = data["upstream-cyberdream"]
     dark = upstream["dark"]
     light = upstream["light"]
-    palette = data["palette"]
-    ansi = palette["ansi"]
-    term = palette["terminal"]
 
     dark_colors = [(k, v) for k, v in dark.items()]
     light_colors = [(k, v) for k, v in light.items()]
@@ -171,58 +229,9 @@ def main() -> None:
         drgb, lrgb = hex_to_rgb(dhex), hex_to_rgb(lhex)
         pair(dk, dhex, drgb, lk, lhex, lrgb)
 
-    # ── ansi palette ──
-    section("palette / ansi")
-    normal_names = ["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
-
-    # 16-color bar: 2 rows × 8 columns (normal / bright aligned)
-    print()
-    for label, prefix in [("normal", ""), ("bright", "bright-")]:
-        print(f"  {label + ':':<9}", end="")
-        for name in normal_names:
-            rgb = resolve(ansi[f"{prefix}{name}"]["color"])
-            print(f"{bg(*rgb)}  {RESET}", end="")
-        print()
-
-    # table with colored hex on terminal background
-    term_bg_rgb = resolve(term["background"]["color"])
-    print(f"  {'normal':<{NAME_W}} {'hex':<{HEX_W}} {'color':<{BLOCK_W}}"
-          f"{GAP}"
-          f"{'bright-*':<{NAME_W}} {'hex':<{HEX_W}} {'color':<{BLOCK_W}}")
-    print(f"  {'─' * NAME_W} {'─' * HEX_W} {'─' * BLOCK_W}"
-          f"{GAP}"
-          f"{'─' * NAME_W} {'─' * HEX_W} {'─' * BLOCK_W}")
-    for name in normal_names:
-        bright_name = f"bright-{name}"
-        nrgb = resolve(ansi[name]["color"])
-        nhex = rgb_to_hex(*nrgb)
-        brgb = resolve(ansi[bright_name]["color"])
-        bhex = rgb_to_hex(*brgb)
-        ansi_pair(name, nhex, nrgb, bright_name, bhex, brgb, term_bg_rgb)
-
-    # ── terminal palette ──
-    section("palette / terminal")
-    pairs = [
-        ("background", "foreground"),
-        ("bright-background", "bright-foreground"),
-        ("cursor-background", "cursor-text"),
-    ]
-    pair_labels = [f"{bg} + {fg}" for bg, fg in pairs]
-    label_w = max(len(l) for l in pair_labels)
-    paired_keys = {k for a, b in pairs for k in (a, b)}
-    for (bg_key, fg_key), label in zip(pairs, pair_labels):
-        bg_rgb = resolve(term[bg_key]["color"])
-        fg_rgb = resolve(term[fg_key]["color"])
-        bg_hex = rgb_to_hex(*bg_rgb)
-        fg_hex = rgb_to_hex(*fg_rgb)
-        term_pair(label, bg_rgb, fg_rgb, bg_hex, fg_hex, label_w)
-    for key in term:
-        if key not in paired_keys:
-            trgb = resolve(term[key]["color"])
-            thex = rgb_to_hex(*trgb)
-            fg_rgb = resolve(term["foreground"]["color"])
-            demo = text_on_bg("Sample", fg_rgb, trgb, BLOCK_W + 6)
-            print(f"  {key:<{label_w}} {demo}  {thex}")
+    # ── palettes ──
+    display_palette(data["palette"])
+    display_palette(data["palette-light"])
 
     print()
 
