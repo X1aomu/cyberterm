@@ -22,9 +22,23 @@ def rgb_to_hex(r: int, g: int, b: int) -> str:
 def bg(r: int, g: int, b: int) -> str:
     return f"\033[48;2;{r};{g};{b}m"
 
+def fg(r: int, g: int, b: int) -> str:
+    return f"\033[38;2;{r};{g};{b}m"
+
 def block(r: int, g: int, b: int) -> str:
     """Pure colored block, no text overlay."""
     return f"{bg(r, g, b)}{' ' * BLOCK_W}{RESET}"
+
+def colored_hex(hex_str: str, fg_rgb: tuple, bg_rgb: tuple) -> str:
+    """Hex value in fg color on bg color. Exactly 9 visible chars."""
+    return f"{bg(*bg_rgb)}{fg(*fg_rgb)} {hex_str} {RESET}"
+
+def text_on_bg(text: str, fg_rgb: tuple, bg_rgb: tuple, width: int) -> str:
+    """Render text in fg color on bg background, padded to width visible chars."""
+    inner = f" {text} "
+    pad = width - len(inner)
+    left, right = pad // 2, pad - pad // 2
+    return f"{bg(*bg_rgb)}{fg(*fg_rgb)}{' ' * left}{inner}{' ' * right}{RESET}"
 
 def section(title: str) -> None:
     bar = "─" * (len(title) + 4)
@@ -38,8 +52,26 @@ def pair(left_name: str, left_hex: str, left_rgb: tuple,
           f"{GAP}"
           f"{right_name:<{NAME_W}} {right_hex:<{HEX_W}} {block(*right_rgb)}")
 
+def ansi_pair(left_name: str, left_hex: str, left_rgb: tuple,
+              right_name: str, right_hex: str, right_rgb: tuple,
+              term_bg_rgb: tuple) -> None:
+    """ANSI row with hex colored on terminal background."""
+    lh = colored_hex(left_hex, left_rgb, term_bg_rgb)
+    rh = colored_hex(right_hex, right_rgb, term_bg_rgb)
+    lb = block(*left_rgb)
+    rb = block(*right_rgb)
+    print(f"  {left_name:<{NAME_W}} {lh} {lb}"
+          f"{GAP}"
+          f"{right_name:<{NAME_W}} {rh} {rb}")
+
 def single(name: str, hex_str: str, rgb: tuple) -> None:
     print(f"  {name:<{NAME_W}} {hex_str:<{HEX_W}} {block(*rgb)}")
+
+def term_pair(label: str, bg_rgb: tuple, fg_rgb: tuple,
+              bg_hex: str, fg_hex: str, label_w: int) -> None:
+    """Terminal fg/bg pair — demo text on colored background."""
+    demo = text_on_bg("Sample", fg_rgb, bg_rgb, BLOCK_W + 6)
+    print(f"  {label:<{label_w}} {demo}  {fg_hex} on {bg_hex}")
 
 # ---------- HSV hexagon-model transforms ----------
 # Despite the spec naming them "hsi", the hexagon (piecewise-linear)
@@ -142,6 +174,18 @@ def main() -> None:
     # ── ansi palette ──
     section("palette / ansi")
     normal_names = ["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
+
+    # 16-color bar: 2 rows × 8 columns (normal / bright aligned)
+    print()
+    for label, prefix in [("normal", ""), ("bright", "bright-")]:
+        print(f"  {label + ':':<9}", end="")
+        for name in normal_names:
+            rgb = resolve(ansi[f"{prefix}{name}"]["color"])
+            print(f"{bg(*rgb)}  {RESET}", end="")
+        print()
+
+    # table with colored hex on terminal background
+    term_bg_rgb = resolve(term["background"]["color"])
     print(f"  {'normal':<{NAME_W}} {'hex':<{HEX_W}} {'color':<{BLOCK_W}}"
           f"{GAP}"
           f"{'bright-*':<{NAME_W}} {'hex':<{HEX_W}} {'color':<{BLOCK_W}}")
@@ -154,14 +198,31 @@ def main() -> None:
         nhex = rgb_to_hex(*nrgb)
         brgb = resolve(ansi[bright_name]["color"])
         bhex = rgb_to_hex(*brgb)
-        pair(name, nhex, nrgb, bright_name, bhex, brgb)
+        ansi_pair(name, nhex, nrgb, bright_name, bhex, brgb, term_bg_rgb)
 
     # ── terminal palette ──
     section("palette / terminal")
+    pairs = [
+        ("background", "foreground"),
+        ("bright-background", "bright-foreground"),
+        ("cursor-background", "cursor-text"),
+    ]
+    pair_labels = [f"{bg} + {fg}" for bg, fg in pairs]
+    label_w = max(len(l) for l in pair_labels)
+    paired_keys = {k for a, b in pairs for k in (a, b)}
+    for (bg_key, fg_key), label in zip(pairs, pair_labels):
+        bg_rgb = resolve(term[bg_key]["color"])
+        fg_rgb = resolve(term[fg_key]["color"])
+        bg_hex = rgb_to_hex(*bg_rgb)
+        fg_hex = rgb_to_hex(*fg_rgb)
+        term_pair(label, bg_rgb, fg_rgb, bg_hex, fg_hex, label_w)
     for key in term:
-        trgb = resolve(term[key]["color"])
-        thex = rgb_to_hex(*trgb)
-        single(key, thex, trgb)
+        if key not in paired_keys:
+            trgb = resolve(term[key]["color"])
+            thex = rgb_to_hex(*trgb)
+            fg_rgb = resolve(term["foreground"]["color"])
+            demo = text_on_bg("Sample", fg_rgb, trgb, BLOCK_W + 6)
+            print(f"  {key:<{label_w}} {demo}  {thex}")
 
     print()
 
