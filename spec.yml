@@ -31,6 +31,7 @@ upstream-cyberdream:
     purple:        &upstream_light_purple        '#a018ff'
 
 palette:
+  name: 'cyberterm'
   ansi:
     black:
       color: *upstream_dark_bg_alt
@@ -100,3 +101,75 @@ palette:
       color: *upstream_dark_yellow
     cursor-text:
       color: *upstream_dark_pink
+
+palette-light:
+  name: 'cyberterm-light'
+  ansi:
+    black:
+      color: *upstream_light_bg_alt
+    red:
+      color: *upstream_light_red
+    green:
+      color: *upstream_light_green
+    yellow:
+      color: *upstream_light_orange
+    blue:
+      color: *upstream_light_blue
+    magenta:
+      color: *upstream_light_purple
+    cyan:
+      color: *upstream_light_cyan
+    white:
+      color: *upstream_dark_bg_hightlight
+    bright-black:
+      color: *upstream_light_grey
+    bright-red:
+      color: *upstream_light_pink
+    bright-green:
+      color:
+        transform:
+          input: *upstream_light_green
+          steps:
+            - rgb-to-hsv
+            - hue-add-10-degree
+            - sat-set-max
+            - hsv-to-rgb
+    bright-yellow:
+      color: *upstream_light_yellow
+    bright-blue:
+      color:
+        transform:
+          input: *upstream_light_blue
+          steps:
+            - rgb-to-hsv
+            - hue-add-10-degree
+            - sat-set-max
+            - hsv-to-rgb
+    bright-magenta:
+      color: *upstream_light_magenta
+    bright-cyan:
+      color:
+        transform:
+          input: *upstream_light_cyan
+          steps:
+            - rgb-to-hsv
+            - hue-add-10-degree
+            - sat-set-max
+            - hsv-to-rgb
+    bright-white:
+      color: *upstream_light_fg
+  terminal:
+    background:
+      color: *upstream_light_bg
+    foreground:
+      color: *upstream_dark_bg_alt
+    bright-background:
+      color: *upstream_light_bg_hightlight
+    bright-foreground:
+      color: *upstream_light_fg
+    selection-background:
+      color: *upstream_light_bg_hightlight
+    cursor-background:
+      color: *upstream_light_orange
+    cursor-text:
+      color: *upstream_light_red
