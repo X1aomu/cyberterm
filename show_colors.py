@@ -230,7 +230,7 @@ def main() -> None:
         pair(dk, dhex, drgb, lk, lhex, lrgb)
 
     # ── palettes ──
-    display_palette(data["palette"])
+    display_palette(data["palette-dark"])
     display_palette(data["palette-light"])
 
     print()
