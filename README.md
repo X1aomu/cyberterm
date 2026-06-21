@@ -6,6 +6,12 @@ While the upstream `cyberdream.nvim` theme is beautiful, its provided terminal c
 
 **cyberterm** bridges this gap by focusing on the color palette itself. It expands the original colors into a complete, harmonious 16-color ANSI palette (both normal and bright variants). For convenience, ready-to-use configurations for several popular terminal emulators are also included out-of-the-box.
 
+## Screenshots
+
+| Dark Mode | Light Mode |
+| :---: | :---: |
+| ![cyberterm dark mode](./assets/palette-cyberterm-dark.png) | ![cyberterm light mode](./assets/palette-cyberterm-light.png) |
+
 ## Palette
 
 ### Dark Mode
