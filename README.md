@@ -1,4 +1,4 @@
-# cyberterm
+# ᴄʏʙᴇʀᴛᴇʀᴍ
 
 **cyberterm** is a fully fleshed-out 16-color terminal palette, inspired by the excellent [cyberdream.nvim](https://github.com/scottmckendry/cyberdream.nvim) Neovim theme.
 
@@ -6,15 +6,36 @@ While the upstream `cyberdream.nvim` theme is beautiful, its provided terminal c
 
 **cyberterm** bridges this gap by focusing on the color palette itself. It expands the original colors into a complete, harmonious 16-color ANSI palette (both normal and bright variants). For convenience, ready-to-use configurations for several popular terminal emulators are also included out-of-the-box.
 
-## Screenshots
+## 📸 Screenshots
 
 | Dark Mode | Light Mode |
 | :---: | :---: |
 | ![cyberterm dark mode](./assets/palette-cyberterm-dark.png) | ![cyberterm light mode](./assets/palette-cyberterm-light.png) |
 
-## Palette
+## ✨ Features
 
-### Dark Mode
+- **Full 16-Color Palette**: Expands the original 8-color terminal config into a complete 16-color ansi palette.
+- **Color Philosophy**: The design principle strictly maximizes the use of the original upstream colors to maintain authentic aesthetic harmony. New colors are dynamically generated (e.g., via HSV transformations like hue shifting and maximizing saturation) only to fill the missing or unsuitable slots in the 16-color palette.
+- **Cyber-Flavored Cursors**: The cursor colors have been meticulously tweaked to give your terminal a more authentic "cyber" feel.
+  - *Dark Mode*: Striking Yellow cursor with Pink text.
+  - *Light Mode*: Vibrant Orange cursor with Red text.
+- **Dark & Light Variants**: Full support for both dark and light modes.
+- **Multi-Terminal Support**: Out-of-the-box configurations for popular terminal emulators.
+
+## 💻 Terminal Configurations
+
+You can find the ready-to-use configuration files for your favorite terminal emulator in the root of this repository:
+
+- **Alacritty**: [Dark](./cyberterm-dark-alacritty.toml) / [Light](./cyberterm-light-alacritty.toml)
+- **Kitty**: [Dark](./cyberterm-dark-kitty.conf) / [Light](./cyberterm-light-kitty.conf)
+- **Konsole**: [Dark](./cyberterm-dark-konsole.colorscheme) / [Light](./cyberterm-light-konsole.colorscheme)
+- **Windows Terminal**: [Dark](./cyberterm-dark-wt.json) / [Light](./cyberterm-light-wt.json)
+
+*(Missing your favorite terminal? PRs to add new configurations are always welcome!)*
+
+## 🎨 Palette
+
+### 🌙 Dark Mode
 
 #### ANSI Colors
 
@@ -41,7 +62,7 @@ While the upstream `cyberdream.nvim` theme is beautiful, its provided terminal c
 | **Cursor Background** | ![](https://placehold.co/20x20/f1ff5e/f1ff5e.png) `#f1ff5e` |
 | **Cursor Text** | ![](https://placehold.co/20x20/ff5ea0/ff5ea0.png) `#ff5ea0` |
 
-### Light Mode
+### ☀️ Light Mode
 
 #### ANSI Colors
 
@@ -68,31 +89,12 @@ While the upstream `cyberdream.nvim` theme is beautiful, its provided terminal c
 | **Cursor Background** | ![](https://placehold.co/20x20/d17c00/d17c00.png) `#d17c00` |
 | **Cursor Text** | ![](https://placehold.co/20x20/d11500/d11500.png) `#d11500` |
 
-## Features
-
-- **Full 16-Color Palette**: Expands the original 8-color terminal config into a complete 16-color ansi palette.
-- **Color Philosophy**: The design principle strictly maximizes the use of the original upstream colors to maintain authentic aesthetic harmony. New colors are dynamically generated (e.g., via HSV transformations like hue shifting and maximizing saturation) only to fill the missing or unsuitable slots in the 16-color palette.
-- **Cyber-Flavored Cursors**: The cursor colors have been meticulously tweaked to give your terminal a more authentic "cyber" feel.
-  - *Dark Mode*: Striking Yellow cursor with Pink text.
-  - *Light Mode*: Vibrant Orange cursor with Red text.
-- **Dark & Light Variants**: Full support for both dark and light modes.
-- **Multi-Terminal Support**: Out-of-the-box configurations for popular terminal emulators.
-
-## Supported Terminals
-
-You can find the configuration files for your favorite terminal emulator in the root of this repository:
-
-- **Alacritty**: [Dark](./cyberterm-dark-alacritty.toml) / [Light](./cyberterm-light-alacritty.toml)
-- **Kitty**: [Dark](./cyberterm-dark-kitty.conf) / [Light](./cyberterm-light-kitty.conf)
-- **Konsole**: [Dark](./cyberterm-dark-konsole.colorscheme) / [Light](./cyberterm-light-konsole.colorscheme)
-- **Windows Terminal**: [Dark](./cyberterm-dark-wt.json) / [Light](./cyberterm-light-wt.json)
-
-## How It Works
+## 🪄 How It Works
 
 The magic behind the color palette generation is defined in [`spec.yml`](./spec.yml). You can inspect this file to see exactly how the base colors from `cyberdream` are mapped and how the missing colors are generated via color space transformations (`rgb-to-hsv` -> `hue shift` -> `sat-set-max` -> `hsv-to-rgb`).
 
 The repository also includes a `show_colors.py` script, which is used to preview and process these colors.
 
-## License
+## 📜 License
 
 This project is open-source and free to use. See the [LICENSE](LICENSE) file for details. Enjoy your new cyberpunk terminal experience!
